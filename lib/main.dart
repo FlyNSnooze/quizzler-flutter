@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'quiz_brain.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -7,7 +10,7 @@ class Quizzler extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: Colors.black,
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -27,18 +30,18 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  List<String> questionAble = [
-    'You can lead a cow down stairs but not up stairs.',
-    'Approximately one quarter of human bones are in the feet.',
-    'A slug\'s blood is green.',
-    'MJ is the GOAT',
-    'Deep purple is the best',
-    'Sel loves ya.'
-  ];
-
-  List<bool> answerQuestions = [false, true, true, true, false, true];
-
-  int indexTracker = 0; //ilk index 0 olduğundan bu şekilde başlattık.
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+//eğer kullanıcının seçtiği cevap kayıtlı cevap ile eşleşiyorsa yanıta doğru cevabı dön.
+    if (userPickedAnswer == correctAnswer) {
+      print('The answer is true.');
+    } else {
+      print('The answer is false.');
+    }
+    setState(() {
+      quizBrain.nextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questionAble[indexTracker],
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -65,9 +68,8 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           child: Padding(
             padding: EdgeInsets.all(15.0),
-            child: FlatButton(
-              textColor: Colors.white,
-              color: Colors.green,
+            child: TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
               child: Text(
                 'True',
                 style: TextStyle(
@@ -77,17 +79,6 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                bool correctAnswer = answerQuestions[indexTracker];
-
-                if (correctAnswer == true) {
-                  print('The answer is true.');
-                } else {
-                  print('The answer is false.');
-                }
-
-                setState(() {
-                  indexTracker++;
-                });
               },
             ),
           ),
@@ -95,8 +86,8 @@ class _QuizPageState extends State<QuizPage> {
         Expanded(
           child: Padding(
             padding: EdgeInsets.all(15.0),
-            child: FlatButton(
-              color: Colors.red,
+            child: TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.red),
               child: Text(
                 'False',
                 style: TextStyle(
@@ -106,31 +97,12 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                bool correctAnswer = answerQuestions[indexTracker];
-
-                if (correctAnswer == false) {
-                  print('The answer is true.');
-                } else {
-                  print('The answer is false.');
-                }
-
-                setState(() {
-                  indexTracker++;
-                });
               },
             ),
           ),
         ),
-        Row(
-          children: scoreKeeper,
-        )
+        Row()
       ],
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
